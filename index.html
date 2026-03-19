@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MacroSpace Farmacia</title>
+
+<style>
+body{font-family:Arial;margin:0;background:#f3f6fb}
+
+header{background:#0a7cff;color:white;padding:25px;text-align:center}
+
+nav{background:#063e7a;padding:12px;text-align:center}
+
+nav a{color:white;margin:0 10px;text-decoration:none;font-weight:bold}
+
+section{padding:40px}
+
+.btn{background:#0a7cff;color:white;border:none;padding:8px 14px;border-radius:5px;cursor:pointer}
+
+.productos{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px
+}
+
+.producto{
+background:white;
+padding:15px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 0 8px rgba(0,0,0,0.1)
+}
+
+.producto img{width:110px;height:110px;object-fit:cover}
+
+#carrito{
+position:fixed;
+right:0;
+top:0;
+width:320px;
+height:100%;
+background:white;
+box-shadow:-3px 0 10px rgba(0,0,0,0.2);
+padding:20px;
+display:none;
+overflow:auto
+}
+
+table{width:100%;border-collapse:collapse}
+
+td,th{border:1px solid #ddd;padding:8px}
+
+th{background:#0a7cff;color:white}
+
+input,textarea,select{padding:7px;margin-top:5px;width:100%}
+
+.adminBox{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1)
+}
+
+#chatbot-btn{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#0a7cff;
+color:white;
+border:none;
+padding:15px;
+border-radius:50%;
+cursor:pointer
+}
+
+#chatbot{
+position:fixed;
+bottom:80px;
+right:20px;
+width:260px;
+background:white;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+display:none
+}
+
+#chatbot-header{
+background:#0a7cff;
+color:white;
+padding:10px;
+border-radius:10px 10px 0 0
+}
+
+#chatlog{height:150px;overflow:auto;padding:10px;font-size:14px}
+
+.whatsapp{
+position:fixed;
+bottom:20px;
+left:20px;
+background:#25D366;
+color:white;
+padding:12px;
+border-radius:50%;
+font-size:18px;
+text-decoration:none
+}
+
+.review{
+background:#fff;
+padding:10px;
+margin:10px 0;
+border-radius:6px
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Farmacia MacroSpace</h1>
+<p>Salud, confianza y tecnología para tu bienestar</p>
+</header>
+
+<nav>
+<a href="#inicio">Inicio</a>
+<a href="#tienda">Tienda</a>
+<a href="#contacto">Atención a clientes</a>
+<a href="#admin">Administración</a>
+<button class="btn" onclick="abrirCarrito()">Carrito</button>
+</nav>
+
+<section id="inicio">
+
+<h2>Presentación de la empresa</h2>
+
+<h3>Misión</h3>
+<p>Brindar medicamentos y productos farmacéuticos de calidad que ayuden a mejorar la salud de nuestros clientes.</p>
+
+<h3>Visión</h3>
+<p>Ser una farmacia reconocida por su innovación digital y confianza.</p>
+
+<h3>Compromiso</h3>
+<p>Ofrecer medicamentos seguros y un servicio accesible.</p>
+
+</section>
+
+<section id="tienda">
+
+<h2>Tienda digital</h2>
+
+<input id="buscador" placeholder="Buscar medicamento..." onkeyup="filtrar()">
+
+<select id="categoria" onchange="filtrar()">
+<option value="todos">Todas las categorías</option>
+<option value="analgesico">Analgésicos</option>
+<option value="vitamina">Vitaminas</option>
+<option value="digestivo">Digestivo</option>
+</select>
+
+<div class="productos" id="productos"></div>
+
+</section>
+
+<div id="carrito">
+<h3>Carrito</h3>
+<div id="lista"></div>
+<br>
+<button class="btn" onclick="realizarPedido()">Realizar pedido</button>
+<button class="btn" onclick="cerrarCarrito()">Cerrar</button>
+</div>
+
+<section id="contacto">
+
+<h2>Atención a clientes</h2>
+
+<p><b>Teléfono:</b> +52 729 662 2632</p>
+
+<h3>Buzón de quejas</h3>
+
+<textarea id="queja"></textarea>
+
+<button class="btn" onclick="guardarQueja()">Enviar</button>
+
+</section>
+
+<section id="reviews">
+
+<h2>Opiniones de clientes</h2>
+
+<input id="nombreReview" placeholder="Tu nombre">
+<textarea id="textoReview" placeholder="Tu opinión"></textarea>
+
+<button class="btn" onclick="guardarReview()">Publicar</button>
+
+<div id="listaReviews"></div>
+
+</section>
+
+<section id="admin">
+
+<h2>Panel administrativo</h2>
+
+<div class="adminBox">
+
+<h3>Login administrador</h3>
+
+<input id="adminUser" placeholder="Usuario">
+<input id="adminPass" type="password" placeholder="Contraseña">
+
+<button class="btn" onclick="login()">Entrar</button>
+
+<div id="panelAdmin" style="display:none">
+
+<h3>Pedidos</h3>
+<table>
+<thead>
+<tr><th>Producto</th><th>Precio</th></tr>
+</thead>
+<tbody id="tablaPedidos"></tbody>
+</table>
+
+<h3>Quejas</h3>
+<ul id="listaQuejas"></ul>
+
+<h3>Estadísticas</h3>
+<p id="estadisticas"></p>
+
+</div>
+
+</div>
+
+</section>
+
+<a class="whatsapp" href="https://wa.me/527296622632">W</a>
+
+<footer style="background:#063e7a;color:white;text-align:center;padding:20px">
+MacroSpace Farmacia © 2026
+</footer>
+
+<button id="chatbot-btn" onclick="toggleChat()">💬</button>
+
+<div id="chatbot">
+
+<div id="chatbot-header">Asistente</div>
+
+<div id="chatlog"></div>
+
+<input id="chatInput">
+
+<button onclick="chat()">Enviar</button>
+
+</div>
+
+<script>
+
+let productos=[
+{n:"Paracetamol",p:45,c:"analgesico",i:"https://upload.wikimedia.org/wikipedia/commons/2/2f/Paracetamol-sample.jpg"},
+{n:"Ibuprofeno",p:60,c:"analgesico",i:"https://upload.wikimedia.org/wikipedia/commons/8/8a/Ibuprofen_tablets.jpg"},
+{n:"Aspirina",p:50,c:"analgesico",i:"https://upload.wikimedia.org/wikipedia/commons/3/30/Aspirin_tablets.jpg"},
+{n:"Vitamina C",p:120,c:"vitamina",i:"https://upload.wikimedia.org/wikipedia/commons/5/5e/Cough_syrup.jpg"},
+{n:"Antiácido",p:70,c:"digestivo",i:"https://upload.wikimedia.org/wikipedia/commons/0/0e/Antacid_tablets.jpg"}
+]
+
+let carrito=[]
+
+function mostrarProductos(lista){
+
+let cont=document.getElementById("productos")
+
+cont.innerHTML=""
+
+lista.forEach(p=>{
+
+cont.innerHTML+=`
+<div class="producto">
+<img src="${p.i}">
+<h4>${p.n}</h4>
+<p>$${p.p}</p>
+<button onclick="agregar('${p.n}',${p.p})">Agregar</button>
+</div>`
+
+})
+
+}
+
+mostrarProductos(productos)
+
+function filtrar(){
+
+let texto=document.getElementById("buscador").value.toLowerCase()
+
+let cat=document.getElementById("categoria").value
+
+let filtrados=productos.filter(p=>{
+
+return (p.n.toLowerCase().includes(texto)) &&
+(cat=="todos" || p.c==cat)
+
+})
+
+mostrarProductos(filtrados)
+
+}
+
+function agregar(n,p){
+
+carrito.push({n,p})
+
+let lista=document.getElementById("lista")
+
+lista.innerHTML+=n+" - $"+p+"<br>"
+
+}
+
+function abrirCarrito(){
+
+document.getElementById("carrito").style.display="block"
+
+}
+
+function cerrarCarrito(){
+
+document.getElementById("carrito").style.display="none"
+
+}
+
+function realizarPedido(){
+
+let pedidos=JSON.parse(localStorage.getItem("pedidos")||"[]")
+
+carrito.forEach(p=>pedidos.push(p))
+
+localStorage.setItem("pedidos",JSON.stringify(pedidos))
+
+alert("Pedido registrado")
+
+carrito=[]
+
+}
+
+function guardarQueja(){
+
+let q=document.getElementById("queja").value
+
+let quejas=JSON.parse(localStorage.getItem("quejas")||"[]")
+
+quejas.push(q)
+
+localStorage.setItem("quejas",JSON.stringify(quejas))
+
+alert("Queja enviada")
+
+}
+
+function guardarReview(){
+
+let nombre=document.getElementById("nombreReview").value
+
+let texto=document.getElementById("textoReview").value
+
+let reviews=JSON.parse(localStorage.getItem("reviews")||"[]")
+
+reviews.push({nombre,texto})
+
+localStorage.setItem("reviews",JSON.stringify(reviews))
+
+mostrarReviews()
+
+}
+
+function mostrarReviews(){
+
+let lista=document.getElementById("listaReviews")
+
+let reviews=JSON.parse(localStorage.getItem("reviews")||"[]")
+
+lista.innerHTML=""
+
+reviews.forEach(r=>{
+
+lista.innerHTML+=`<div class="review"><b>${r.nombre}</b><br>${r.texto}</div>`
+
+})
+
+}
+
+mostrarReviews()
+
+function login(){
+
+let u=document.getElementById("adminUser").value
+
+let p=document.getElementById("adminPass").value
+
+if(u=="admin" && p=="1234"){
+
+document.getElementById("panelAdmin").style.display="block"
+
+cargarAdmin()
+
+}else{
+
+alert("Datos incorrectos")
+
+}
+
+}
+
+function cargarAdmin(){
+
+let pedidos=JSON.parse(localStorage.getItem("pedidos")||"[]")
+
+let tabla=document.getElementById("tablaPedidos")
+
+tabla.innerHTML=""
+
+let total=0
+
+pedidos.forEach(p=>{
+
+tabla.innerHTML+=`<tr><td>${p.n}</td><td>$${p.p}</td></tr>`
+
+total+=p.p
+
+})
+
+let quejas=JSON.parse(localStorage.getItem("quejas")||"[]")
+
+let lista=document.getElementById("listaQuejas")
+
+lista.innerHTML=""
+
+quejas.forEach(q=>{
+
+lista.innerHTML+="<li>"+q+"</li>"
+
+})
+
+document.getElementById("estadisticas").innerText="Ventas totales: $"+total
+
+}
+
+function toggleChat(){
+
+let c=document.getElementById("chatbot")
+
+c.style.display=c.style.display=="block"?"none":"block"
+
+}
+
+function chat(){
+
+let input=document.getElementById("chatInput")
+
+let msg=input.value.toLowerCase()
+
+let r="No entendí."
+
+if(msg.includes("hola")) r="Hola ¿en qué medicamento puedo ayudarte?"
+
+if(msg.includes("horario")) r="Horario de 8am a 10pm"
+
+if(msg.includes("telefono")) r="Teléfono +52 729 662 2632"
+
+let log=document.getElementById("chatlog")
+
+log.innerHTML+="<p><b>Tú:</b> "+input.value+"</p>"
+
+log.innerHTML+="<p><b>Bot:</b> "+r+"</p>"
+
+log.scrollTop=log.scrollHeight
+
+input.value=""
+
+}
+
+</script>
+
+</body>
+</html>
